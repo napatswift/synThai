@@ -29,12 +29,15 @@ class SynThaiger(templates.Template):
         )
 
     def generate(self):
-        number_of_sample = np.random.randint(0, 4)
+        number_of_sample = np.random.randint(1, 4)
         texts = [self.corpus.data(self.corpus.sample()) for _ in range(number_of_sample)]
         font = self.font.sample()
         colors = [self.color.data(self.color.sample()) for _ in range(number_of_sample)]
 
-        text_group = layers.Group([layers.TextLayer(text, color=color, **font) for text, color in zip(texts, colors)])
+        text_group = layers.Group([
+            layers.TextLayer(text, color=color, **font)
+            for text, color in zip(texts, colors)
+            ])
         self.layout.apply(text_group)
 
         bg_layer = layers.RectLayer(text_group.size, self.bgcolor.data(self.bgcolor.sample()))
@@ -64,16 +67,18 @@ class SynThaiger(templates.Template):
         label = data["label"]
         font = data["font"]
 
-        h, w, d = image.shape
-
-        shard = str(idx // 1000)
+        shard = str(idx // 10000)
         image_key = os.path.join("images", shard, f"{idx}.jpg")
         image_path = os.path.join(root, image_key)
 
         os.makedirs(os.path.dirname(image_path), exist_ok=True)
         image = Image.fromarray(image[..., :3].astype(np.uint8))
+        w, h = image.size
+        if w > 512:
+            h = int(h/(w/512))
+            w = int(w/(w/512))
+        image = image.resize((w, h))
         image.save(image_path, quality=np.random.randint(30, 95))
-
         self.gt_file.write(f"{image_key}\t{label}\n")
 
     def end_save(self, root):
