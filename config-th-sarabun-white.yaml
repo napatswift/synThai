@@ -1,0 +1,53 @@
+corpus:
+  paths: [resources/corpus/BEST-text.txt, resources/corpus/prachathai-tokens.txt]
+  weights: [1, 1]
+  min_length: 32
+  max_length: 64
+
+font:
+  paths: [resources/font/th-sarabun]
+  weights: [1]
+  size: [32, 64]
+  bold: 0.5
+
+color:
+  rgb: [[0, 0], [0, 0], [0, 0]]
+  alpha: [1, 1]
+  grayscale: 0
+
+bgcolor:
+  rgb: [[255, 255], [255, 255], [255, 255]]
+  alpha: [1, 1]
+  grayscale: 0
+
+layout:
+  length: [200, 1023]
+
+postprocess:
+  args:
+    # gaussian noise
+    - prob: 0.05
+      args:
+        scale: [4, 8]
+        per_channel: 0
+    # gaussian blur
+    - prob: 0.05
+      args:
+        sigma: [0, 2]
+    # resample
+    - prob: 0.01
+      args:
+        size: [0.4, 0.6]
+    # median blur
+    - prob: 0.05
+      args:
+        k: [1, 2]
+
+texture:
+  prob: 0
+  args:
+    paths: [resources/image]
+    weights: [1]
+    alpha: [0, 8]
+    grayscale: 0.5
+    crop: 1
